@@ -1,0 +1,137 @@
+#!/usr/bin/env perl
+
+use warnings;
+use strict;
+use LWP::Simple;
+use LWP::UserAgent;
+
+
+our $VERSION = '0.01';
+
+
+my $urlin  = shift or die "url?\n";
+my $file = shift;
+print "starting first page retrieval ($urlin)\n";
+my $content = get($urlin) or die "$!\n"; 
+print "done first page retrieval\n";
+# print $content;
+
+# regex for 2 key text strings which identify the video file
+# the second one $2 is unique for each download attempt
+
+# $content =~ /player2\.swf\?.*?video_id=([^&]+)&.*t=([^&]+)&/;
+$content =~ /video_id:'(.*?)',.*,t:'(.*?)',/;
+my $video_id = $1;
+my $t = $2;
+
+$file = $video_id unless defined $file && length $file;  # default
+$file .= '.flv' unless $file =~ /\.flv$/;
+
+my $get_url = "http://www.youtube.com/get_video?video_id=$video_id&t=$t";
+
+# print "getting video file $get_url\n";
+
+# don't buffer the prints to make the status update
+$| = 1;
+
+open OUT, ">$file" or die "can't open $file for writing: $!\n"; 
+
+my $ua = LWP::UserAgent->new;
+my $received_size = 0;
+my $url = $get_url;
+print "Fetching $url\n";
+my $request_time = time;
+my $last_update = 0;
+my $response = $ua->get(
+    $url,
+    ':content_cb'     => \&callback,
+    ':read_size_hint' => 8192,
+);
+print "\n";
+close OUT or die "can't close $file: $!\n";
+
+
+sub callback {
+    my ($data, $response, $protocol) = @_;
+
+    my $total_size = $response->header('Content-Length') || 0;
+    $received_size += length $data;
+    print OUT $data;
+
+    my $time_now = time;
+
+    # this to make the status only update once per second.
+    return unless $time_now > $last_update or $received_size == $total_size;
+    $last_update = $time_now;
+
+    print "\rReceived $received_size bytes";
+    printf " (%i%%)", (100/$total_size)*$received_size if $total_size;
+    printf " %6.1f/bps", $received_size/(($time_now-$request_time)||1)
+        if $received_size;
+}
+
+
+__END__
+
+=head1 NAME
+
+vget - Video downloader (YouTube only at the moment)
+
+=head1 SYNOPSIS
+
+    vget http://youtube.com/watch?v=_vXTSXOPpmA yapc_asia-tokyo_2007
+
+=head1 DESCRIPTION
+
+This application can download videos from YouTube. It could conceivably be
+expanded to be able to download from other video sources as well.
+
+The program takes two arguments. The first one is the URL of the page that the
+video you want to download appears in (see L</SYNOPSIS> for an example). The
+second argument is the filename where you want to store the downloaded video.
+The filename is optional; if not given, the video's ID is used. If the
+filename doesn't end in C<.flv>, that suffix is added. Thus, the video
+downloaded in the L</SYNOPSIS> example would be stored in
+C<yapc_asia-tokyo_2007.flv>.
+
+The program was adapted from the code posted at
+L<http://www.perlmonks.org/?node_id=636777>. I wanted to make it easily
+installable via the CPAN shell, hence this distribution. YouTube had also
+changed its markup in the mean time, so the program is not a 100% copy
+anymore.
+
+=head1 TAGS
+
+If you talk about this module in blogs, on del.icio.us or anywhere else,
+please use the C<appvget> tag.
+
+=head1 BUGS AND LIMITATIONS
+
+No bugs have been reported.
+
+Please report any bugs or feature requests to C<bug-app-vget@rt.cpan.org>, or
+through the web interface at L<http://rt.cpan.org>.
+
+=head1 INSTALLATION
+
+See perlmodinstall for information and options on installing Perl modules.
+
+=head1 AVAILABILITY
+
+The latest version of this module is available from the Comprehensive Perl
+Archive Network (CPAN). Visit <http://www.perl.com/CPAN/> to find a CPAN
+site near you. Or see <http://www.perl.com/CPAN/authors/id/M/MA/MARCEL/>.
+
+=head1 AUTHOR
+
+Marcel GrE<uuml>nauer, C<< <marcel@cpan.org> >>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2004-2007 by Marcel GrE<uuml>nauer
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
