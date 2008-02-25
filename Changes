@@ -1,5 +1,25 @@
-Revision history for Perl extension App::vget.
-
-0.01  Thu Nov  8 13:01:25 CET 2007
-        - original version
-
+---
+global:
+  name: App-vget
+releases:
+  - author: 'Marcel Gruenauer <marcel@cpan.org>'
+    changes:
+      - Changed Changes file to YAML style
+      - '.shipit: added Twitter step'
+      - 'Makefile.PL: added auto_install() and process_templates()'
+      - 'bin/*: removed standard pod section'
+      - 'lib/*: converted to template'
+      - updated MANIFEST
+      - added t/perlcriticrc
+      - updated MANIFEST
+      - 'bin/vget: updated video_id parsing to the new youtube style'
+    date: 2008-02-25T21:24:38Z
+    tags:
+      - NEWFEATURE
+    version: 0.02
+  - author: 'Marcel Gruenauer <marcel@cpan.org>'
+    changes:
+      - original version
+    date: 2007-11-08T13:01:25+01:00
+    tags: []
+    version: 0.01

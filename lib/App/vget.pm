@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 1;
@@ -12,9 +12,11 @@ our $VERSION = '0.01';
 
 __END__
 
+
+
 =head1 NAME
 
-App::vget - Marker package for vget
+App::vget - Video downloader
 
 =head1 SYNOPSIS
 
@@ -30,12 +32,17 @@ CPAN shell.
 If you talk about this module in blogs, on del.icio.us or anywhere else,
 please use the C<appvget> tag.
 
+=head1 VERSION 
+                   
+This document describes version 0.02 of L<App::vget>.
+
 =head1 BUGS AND LIMITATIONS
 
 No bugs have been reported.
 
-Please report any bugs or feature requests to C<bug-app-vget@rt.cpan.org>, or
-through the web interface at L<http://rt.cpan.org>.
+Please report any bugs or feature requests to
+C<<bug-app-vget@rt.cpan.org>>, or through the web interface at
+L<http://rt.cpan.org>.
 
 =head1 INSTALLATION
 
@@ -53,10 +60,11 @@ Marcel GrE<uuml>nauer, C<< <marcel@cpan.org> >>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2004-2007 by Marcel GrE<uuml>nauer
+Copyright 2007-2008 by Marcel GrE<uuml>nauer
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
+
 
 =cut
 
